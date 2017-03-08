@@ -4,3 +4,5 @@
 73958
 ### Кол-во слов: 
 13693044 ~ 13,7 млн. 
+### Корпус доступен здесь: 
+[ссылка на архив](https://drive.google.com/file/d/0Byn0BuUE0_AUaHVPSzZMdUNUZ0k/view?usp=sharing)
