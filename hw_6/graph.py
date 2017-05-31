@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 lemma_freq = {}
 
-good_pos = ['A', 'S', 'V']
+GOOD_POS = ['A', 'S', 'V', 'ADV']
 
 
 def read_texts():
@@ -28,7 +28,7 @@ def read_texts():
                         pos = w[1]
                     else:
                         pos = '??'
-                    if pos in good_pos:
+                    if pos in GOOD_POS:
                         word_li.append(lemma)
                         make_dic(lemma)
                 i += 1
@@ -43,19 +43,8 @@ def make_dic(lemma):
         lemma_freq[lemma] += 1
 
 
-def cut_words(word_lists):
-    new_list = []
-    for text in word_lists:
-        new_text = []
-        for word in text:
-            if lemma_freq[word] > 10:
-                new_text.append(word)
-        new_list.append(new_text)
-    return new_list
-
 def make_graph():
     word_lists = read_texts()
-    word_lists = cut_words(word_lists)
     g = nx.Graph()
     for text in word_lists:
         i = 0
@@ -66,24 +55,27 @@ def make_graph():
             if i < len_t - 1:
                 g.add_edge(word, text[i+2])
             i += 1
-    pos = nx.spring_layout(g)
-    nx.draw_networkx_nodes(g, pos, node_color = 'blue', node_size=7)
-    nx.draw_networkx_edges(g, pos, edge_color = 'yellow')
-    nx.draw_networkx_labels(g, pos, font_size = 7)
-    plt.axis('off')
-    plt.savefig('graph.png')
     print('радиус - ' + str(nx.radius(g)))
     print('диаметр - ' + str(nx.diameter(g)))
     print('кол-во узлов - ' + str(g.number_of_nodes()))
     print('кол-во ребер - ' + str(g.number_of_edges()))
     print('плотность - ' + str(nx.density(g)))
     deg = nx.degree_centrality(g)
-    print('центральные узлы:')
-    n = 1
-    for node_id in sorted(deg, key=deg.get, reverse=True):
-        if n < 10:
-            print(node_id)
-        n += 1
+    nodes = []
+    for node in sorted(deg, key=deg.get, reverse=True):
+        nodes.append(node)
+    sub_g = g.subgraph(nodes[:25])
+    save_graph(sub_g, 'graph_25.png')
+    save_graph(g, 'graph_all.png')
+
+
+def save_graph(g, name):
+    pos = nx.random_layout(g)
+    nx.draw_networkx_nodes(g, pos, node_color='blue', node_size=7)
+    nx.draw_networkx_edges(g, pos, edge_color='yellow')
+    nx.draw_networkx_labels(g, pos, font_size=7)
+    plt.axis('off')
+    plt.savefig(name)
 
 if __name__ == '__main__':
     make_graph()  
